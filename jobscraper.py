@@ -13,7 +13,7 @@ import ssl
 import email
 from email.message import EmailMessage
 
-def send_email():
+def send_email(): #function which sends email to chosen recipient when new job has opened
     email_sender='theateropps@gmail.com'
     email_receiver='*****************'
     app_password = password()
@@ -40,7 +40,7 @@ def send_email():
 
 
 
-def theater_search():
+def theater_search(): #uses Beautiful Soup and webscraping to read through theater websites, and updates spreadsheet if new job has opened up
     new_info = False
     with open("/Users/ronitmehta/Desktop/theatresearch/Theater_Search.txt") as f:
         listoft = [line.rstrip('\n') for line in f]
@@ -73,6 +73,9 @@ def theater_search():
                 if full_phrase not in listoft:
                     with open("/Users/ronitmehta/Desktop/theatresearch/Theater_Search.txt", "a") as doc:
                         doc.write(full_phrase + '\n')
+
+
+                    #if new job has opened, make cell in Excel sheet red and updates the table
                     sheet.cell(row=count, column=1).value = theaters[i]
                     sheet.cell(row=count, column=2).value = opp
                     sheet.cell(row=count, column=3).value = urls[i]
@@ -80,7 +83,11 @@ def theater_search():
                     sheet.cell(count, 2).fill =  PatternFill(start_color='FF0000', end_color='FF0000', fill_type="solid") 
                     sheet.cell(count, 3).fill =  PatternFill(start_color='FF0000', end_color='FF0000', fill_type="solid")
                     new_info = True
+                
+                
                 else:
+                   
+                    #if not a new job, add it to the sheet with no highlight
                     sheet.cell(row=count, column=1).value = theaters[i]
                     sheet.cell(row=count, column=2).value = opp
                     sheet.cell(row=count, column=3).value = urls[i]
@@ -89,7 +96,7 @@ def theater_search():
                     sheet.cell(count, 3).fill =  PatternFill(start_color='FFFFFF', end_color='FFFFFF', fill_type="solid")              
                 count += 1
     wb.save(excelFiles[4])
-    if new_info:
+    if new_info: #if new job, send email
         send_email()
     sys.exit()
 
